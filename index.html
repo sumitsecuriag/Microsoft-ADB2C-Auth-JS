@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://alcdn.msauth.net/browser/2.13.1/js/msal-browser.js" integrity="sha384-7hwr87O1w6buPsX92CwuRaz/wQzachgOEq+iLHv0ESavynv6rbYwKImSl7wUW3wV" crossorigin="anonymous"></script>
+
+    <!-- To help ensure reliability, Microsoft provides a second CDN -->
+    <script type="text/javascript">
+        if(typeof Msal === 'undefined')document.write(unescape("%3Cscript src='https://alcdn.msftauth.net/browser/2.13.1/js/msal-browser.js' type='text/javascript' crossorigin='anonymous' %3E%3C/script%3E"));
+      </script>
+    
+    <title>Azure AD B2C App Example</title>
+</head>
+<body onload="loadDoc()">
+   <div class="navbar">
+       <navbar>
+            <ul>
+                <li>Home</li>
+                <li>About</li>
+                <li><a id="loginstatus" href="login">Login</a></li>
+                <li><img src="https://picsum.photos/id/237/200/300" style="width: 50px; height: 50px; border-radius: 50%;"/></li>
+            </ul>
+       </navbar>
+    </div>
+    <div class="content-body">
+        <div class="posts" id="posts" style="flex: 3; display: flex; margin-top: 5px; flex-direction: column; justify-content: flex-start;">
+        </div>
+        <div class="sidebar" style="flex:1;padding-left: 10px;">
+        
+            <h3>Day of The Week</h3>
+
+            <form action="/action_page.php">
+              <input type="checkbox" id="day1" name="day1" value="Monday">
+              <label for="day1"> Today is Monday</label><br>
+              <input type="checkbox" id="day2" name="day2" value="Tuesday">
+              <label for="day2"> Today is Tuesday</label><br>
+              <input type="checkbox" id="day3" name="day3" value="Wednesday">
+              <label for="day3"> Today is Wednesday</label><br><br>
+              <input type="submit" value="Submit">
+            </form>
+        
+        </div>
+    </div>
+    <div class="footer">
+        <div class="footer-main">
+            <ul>
+                <li>Contact Us</li>
+                <li>Terms of Service</li>
+                <li>Privacy Policy</li>
+                <li>Copyright 2021</li>
+            </ul>
+        </div>
+        <div class="footer-sidebar"></div>
+    </div>
+    <script>
+            function loadDoc() {
+            let x = document.cookie;
+	        console.log(x)
+            if(x=="loggedin=true") {
+            // window.location.replace("http://localhost:3000");
+            document.getElementById("loginstatus").innerText="Logout";
+            document.getElementById("loginstatus").addEventListener('click',logout);
+            } else {
+                window.location.replace("http://localhost:3000/login")
+            }
+            var xhttp = new XMLHttpRequest();
+            xhttp.onreadystatechange = function() {
+                if (this.readyState == 4 && this.status == 200) {
+                    const data=JSON.parse(this.responseText);
+                    console.log(data)
+                    let posts=document.getElementById('posts')
+                    data.forEach(post => {
+                        // var post1 = `<div class="post"><h4>${post.title}</h4><p>${post.body}</p><h6>Posted By: <span>${post.postedby}</span></h6></div>`
+                        // var div = document.createElement("div");
+                        // var textnode = document.createTextNode(`<h4>${post.title}</h4><p>${post.body}</p><h6>Posted By: <span>${post.postedby}</span></h6>`);
+                        // div.appendChild(textnode);
+                        // div.classList.add('post');
+                        var div = document.createElement("div");
+                        var textnode = `<h4>${post.title}</h4><p>${post.body}</p><h6>Posted By: <span>${post.postedby}</span></h6>`;
+                        div.innerHTML = textnode;
+                        div.classList.add('post');
+                        posts.appendChild(div)
+                    })
+                }
+            };
+            xhttp.open("GET", "http://localhost:3000/getposts", true);
+            xhttp.send();
+        }
+
+            function logout() {
+                document.cookie = "loggedin=false";
+                window.location.replace("http://localhost:3000/login")
+            }
+    </script>
+</body>
+</html>
